@@ -1,0 +1,25 @@
+{
+  "name": "Place",
+  "schema": {
+    "name": { "type": "String" },
+    "description": { "type": "String" },
+    "email": { "type": "String" },
+    "mobile": { "type": "String" },
+    "country": { "type": "String" },
+    "city": { "type": "String" },
+    "zipCode": { "type": "String" },
+    "province": { "type": "String" },
+    "address": { "type": "String" },
+    "owner": { "type": "Pointer", "targetClass": "_User"}
+  },
+  "permissions": {
+    "get": { "*": true },
+    "find": { "*": true },
+    "create": {},
+    "update": {},
+    "delete": {},
+    "addField": {},
+    "readUserFields": ["owner"],
+    "writeUserFields": ["owner"]
+  }
+}
