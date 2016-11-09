@@ -4,12 +4,13 @@
     "name": { "type": "String" },
     "description": { "type": "String" },
     "email": { "type": "String" },
-    "mobile": { "type": "String" },
+    "phone": { "type": "String" },
     "country": { "type": "String" },
-    "city": { "type": "String" },
-    "zipCode": { "type": "String" },
     "province": { "type": "String" },
+    "town": { "type": "String" },
+    "zipCode": { "type": "String" },
     "address": { "type": "String" },
+    "coverImage": { "type": "File" },
     "owner": { "type": "Pointer", "targetClass": "_User"}
   },
   "permissions": {
