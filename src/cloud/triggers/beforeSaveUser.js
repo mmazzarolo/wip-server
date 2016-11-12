@@ -1,23 +1,16 @@
-import { isEmpty } from 'lodash'
-import logger from '../../utils/logger'
-import errors from '../../utils/errors'
+import { isNil } from 'lodash'
 
 export default async (req, res) => {
-  try {
-    const user = req.object
+  const user = req.object
+  const isMaster = !isNil(req.master)
+  if (isMaster) return res.success(user)
 
-    if (user.isNew() && !req.master) {
-      // Set username as email
-      const email = user.get('email')
-      user.set('username', email)
-    }
-
-    // Done
-    return res.success(user)
-
-    // Error handling
-  } catch (err) {
-    logger.error(`Errore: ${err.message}`)
-    return res.error(err.message)
+  // Set "username" to "email" on user creation
+  if (user.isNew() && !req.master) {
+    const email = user.get('email')
+    user.set('username', email)
   }
+
+  // Done
+  return res.success(user)
 }

@@ -1,4 +1,4 @@
-import placeSchema from '../schemas/place.json'
+import placeSchema from 'schemas/place.json'
 
 export default [
   placeSchema
