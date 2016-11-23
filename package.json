@@ -27,6 +27,8 @@
     "parse": "1.9.2",
     "parse-server": "2.2.24",
     "parse-utils": "^1.6.0",
+    "request": "^2.79.0",
+    "request-promise": "^4.1.1",
     "validator": "6.1.0"
   },
   "devDependencies": {

@@ -10,7 +10,7 @@
     "town": { "type": "String" },
     "zipCode": { "type": "String" },
     "address": { "type": "String" },
-    "coverImage": { "type": "File" },
+    "imageCover": { "type": "File" },
     "owner": { "type": "Pointer", "targetClass": "_User"}
   },
   "permissions": {
