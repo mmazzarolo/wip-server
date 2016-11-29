@@ -80,10 +80,11 @@ const places = [
 const loadFakeData = (async () => {
   const IMAGE_WIDTH_PIXELS = 1024
   const IMAGE_HEIGHT_PIXELS = 640
+  const user = await Parse.User.logIn('matteo@themostaza.com', 'Mostaza1')
   for (const place of places) {
     const image = await request.get({ url: `https://unsplash.it/${IMAGE_WIDTH_PIXELS}/${IMAGE_HEIGHT_PIXELS}/?random`, encoding: null })
     const imageCover = await new Parse.File(`image_${place.name}`, { base64: new Buffer(image).toString('base64') }, 'image/jpeg').save()
-    const result = await new Place({
+    const placeParam = {
       name: place.name,
       description: place.description,
       country: place.country,
@@ -94,7 +95,12 @@ const loadFakeData = (async () => {
       address: place.address,
       email: place.email,
       imageCover
-    }).save({}, { useMasterKey: true })
+    }
+    const response = await Parse.Cloud.run(
+      'createPlace',
+      { place: placeParam },
+      { sessionToken: user.getSessionToken() }
+    )
   }
   console.log('bin/loadFakeData ended')
 })()

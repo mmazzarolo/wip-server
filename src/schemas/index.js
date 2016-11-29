@@ -1,5 +1,5 @@
-import placeSchema from 'schemas/place.json'
+import Place from 'schemas/Place.json'
 
 export default [
-  placeSchema
+  Place
 ]

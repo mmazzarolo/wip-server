@@ -11,16 +11,15 @@
     "zipCode": { "type": "String" },
     "address": { "type": "String" },
     "imageCover": { "type": "File" },
-    "owner": { "type": "Pointer", "targetClass": "_User"}
+    "createdBy": { "type": "Pointer", "targetClass": "_User" },
+    "ownersRole": { "type": "Pointer", "targetClass": "_Role" }
   },
   "permissions": {
     "get": { "*": true },
     "find": { "*": true },
-    "create": {},
-    "update": {},
+    "create": { "*": true },
+    "update": { "*": true },
     "delete": {},
-    "addField": {},
-    "readUserFields": ["owner"],
-    "writeUserFields": ["owner"]
+    "addField": {}
   }
 }
