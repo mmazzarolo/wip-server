@@ -1,15 +1,9 @@
-import { isEmpty, isNil } from 'lodash'
+import { isEmpty } from 'lodash'
 
 export default async (req, res) => {
   const place = req.object
   const user = req.user
-  const isMaster = !isNil(req.master)
-  if (isMaster) return res.success(place)
-
-  // Set owner on place creation
-  if (place.isNew() && !req.master) {
-    place.set('owner', user)
-  }
+  if (req.master) return res.success(place)
 
   // Place validation
   if (isEmpty(place.get('name'))) {

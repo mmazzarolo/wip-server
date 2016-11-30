@@ -34,5 +34,11 @@ app.listen(keys.PORT, async () => {
   logger.log(`${keys.APP_NAME} running on port ${keys.PORT}.`)
 })
 
+// Fix for unhandled promise errors
+process.on('unhandledRejection', (reason, p) => {
+  console.error('Unhandled promise error', reason, p) // log all your errors, 'unsuppressing' them.
+  throw reason // optional, in case you want to treat these as errors
+})
+
 // Export the app for testing
 export default app

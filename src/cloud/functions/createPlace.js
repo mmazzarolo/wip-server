@@ -12,7 +12,6 @@ export default async (req, res) => {
 
     // Create the place
     place = await new Place().save(placeParams, { sessionToken: userSessionToken })
-    console.log('place', place)
 
     // Create the place role
     const placeRole = new Role()
@@ -23,7 +22,6 @@ export default async (req, res) => {
     placeRoleACL.setPublicWriteAccess(false)
     placeRole.setACL(placeRoleACL, {})
     await placeRole.save({}, { useMasterKey: true })
-    console.log('place2', place)
 
     // Add the place role to the placeOwner one
     const placeOwnerRole = await new Parse.Query(Role)
@@ -31,7 +29,6 @@ export default async (req, res) => {
       .first()
     placeOwnerRole.relation('roles').add(placeRole)
     await placeOwnerRole.save({}, { useMasterKey: true })
-    console.log('placeOwnerRole', placeOwnerRole)
 
     // Finalize the place ACL
     const placeACL = new Parse.ACL()
@@ -39,13 +36,11 @@ export default async (req, res) => {
     placeACL.setPublicWriteAccess(true)
     placeACL.setRoleWriteAccess(placeRole, true)
     place.setACL(placeACL, {})
-    console.log('placeACL', placeACL)
 
     // Set additional place info
     place.set('createdBy', user)
     place.set('ownersRole', placeRole)
     place = await place.save(null, { useMasterKey: true })
-    console.log('place3', place)
 
     // Done
     return res.success(place)

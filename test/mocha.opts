@@ -1,8 +1,7 @@
-./src/**/*.spec.js
+./test/*.test.js
 --compilers js:babel-core/register
 --recursive
 --delay
---require mocha-clean
 --require babel-polyfill
 --require test/setup.js
 --timeout 20000
