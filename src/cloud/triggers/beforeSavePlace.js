@@ -1,6 +1,8 @@
+/* @flow */
+import type { ParseRequest, ParseResponse } from 'src/types/ParseServer'
 import { isEmpty } from 'lodash'
 
-export default async (req, res) => {
+export default async (req: ParseRequest, res: ParseResponse) => {
   const place = req.object
   const user = req.user
   if (req.master) return res.success(place)

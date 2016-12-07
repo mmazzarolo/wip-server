@@ -1,3 +1,4 @@
+/* @flow */
 export default {
   USER_NOT_LOGGED_IN: 'user not logged in',
   ACCOUNT_NOT_FOUND: 'account not found',

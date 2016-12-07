@@ -2,7 +2,7 @@ import Parse from 'parse/node'
 import { after, before, describe, it } from 'mocha'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import { isUserInRole } from 'parse-utils'
+import { isUserInRole, getUserById } from 'parse-utils'
 
 const User = Parse.Object.extend('_User')
 const Role = Parse.Object.extend('_Role')
@@ -55,7 +55,6 @@ describe('createPlace', () => {
     }
     place = await Parse.Cloud.run('createPlace', { place: placeParams }, { sessionToken: user.getSessionToken() })
     assert.isOk(place)
-    assert.equal(place.get('createdBy').id, user.id)
   })
 
   it('checks the Place role', async () => {
@@ -71,4 +70,20 @@ describe('createPlace', () => {
     assert.isTrue(isInRole)
   })
 
+  it('checks the user', async () => {
+    const placeRoleId = place.get('ownersRole').id
+    const placeRole = await new Parse.Query(Role)
+      .equalTo('objectId', placeRoleId)
+      .first()
+    const placeRoleName = placeRole.get('name')
+    const isInRole = await isUserInRole(user.id, placeRoleName)
+    const updatedUser = await getUserById(user.id)
+    const ownedPlaces = updatedUser.get('ownedPlaces')
+
+    assert.isOk(placeRole)
+    assert.equal(placeRoleName, `placeOwner_${place.id}`)
+    assert.isTrue(isInRole)
+    assert.equal(user.id, place.get('createdBy').id)
+    assert.equal(ownedPlaces[0].id, place.id)
+  })
 })

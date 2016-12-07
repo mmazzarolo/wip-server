@@ -1,10 +1,12 @@
+/* @flow */
 import express from 'express'
 import { ParseServer } from 'parse-server'
-import logger from 'utils/logger'
-import * as keys from 'config/keys'
-import schemas from 'schemas'
-import { createRoleIfNotExists } from 'parse-utils'
-import { loadClassesFromSchemas } from 'utils/parse'
+import { createRoleIfNotExists, loadClassesFromSchemas } from 'parse-utils'
+import ParseConfig from 'parse-server/lib/Config'
+
+import logger from 'src/utils/logger'
+import keys from 'src/config/keys'
+import schemas from 'src/schemas'
 
 // Create the express app
 const app = express()
@@ -28,8 +30,9 @@ app.use(keys.PARSE_MOUNT, parseServer)
 
 // Start the server
 app.listen(keys.PORT, async () => {
+  const parseConfig = new ParseConfig(keys.APP_ID, keys.PARSE_MOUNT)
   await createRoleIfNotExists('placeOwner', { useMasterKey: true })
-  await loadClassesFromSchemas(schemas)
+  await loadClassesFromSchemas(parseConfig.database, schemas, true)
   logger.log('[Parse-Server] Initialization completed: up and running.')
   logger.log(`${keys.APP_NAME} running on port ${keys.PORT}.`)
 })

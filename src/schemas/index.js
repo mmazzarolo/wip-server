@@ -1,4 +1,4 @@
-import Place from 'schemas/Place.json'
+import Place from 'src/schemas/Place.json'
 
 export default [
   Place

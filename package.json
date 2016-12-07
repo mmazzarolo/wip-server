@@ -12,10 +12,12 @@
     "test": "NODE_ENV=test mocha",
     "test:watch": "npm run test -- --watch",
     "posttest": "./node_modules/.bin/mongodb-runner stop",
-    "reset": "rm -rf node_modules/ && npm cache clean && npm prune"
+    "reset": "rm -rf node_modules/ && npm cache clean && npm prune",
+    "flow": "flow"
   },
   "dependencies": {
     "babel-plugin-module-resolver": "2.3.0",
+    "babel-plugin-transform-flow-strip-types": "^6.18.0",
     "babel-polyfill": "6.16.0",
     "babel-preset-es2015": "6.18.0",
     "babel-preset-stage-0": "6.16.0",
@@ -23,9 +25,6 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "dotenv": "2.0.0",
-    "eslint": "3.3.1",
-    "eslint-config-mostaza-base": "1.11.2",
-    "eslint-plugin-import": "2.0.1",
     "express": "4.14.0",
     "kerberos": "0.0.22",
     "lodash": "4.16.6",
@@ -43,26 +42,10 @@
     "babel-cli": "6.18.0",
     "babel-core": "6.18.2",
     "babel-eslint": "7.1.0",
-    "eslint": "3.10.0",
+    "eslint": "3.3.1",
     "eslint-config-mostaza-base": "1.11.2",
     "eslint-import-resolver-babel-module": "2.2.1",
-    "eslint-plugin-import": "2.2.0"
-  },
-  "eslintConfig": {
-    "extends": "eslint-config-mostaza-react",
-    "parser": "babel-eslint",
-    "settings": {
-      "import/resolver": {
-        "babel-module": {}
-      }
-    }
-  },
-  "babel": {
-    "presets":["es2015", "stage-0"],
-    "plugins": [
-      ["module-resolver", {
-        "root": ["./src"]
-      }]
-    ]
+    "eslint-plugin-import": "2.2.0",
+    "flow-bin": "^0.36.0"
   }
 }

@@ -1,6 +1,7 @@
+/* @flow */
 import Config from 'parse-server/lib/Config'
-import { APP_ID, PARSE_MOUNT } from 'config/keys'
-import logger from 'utils/logger'
+import { APP_ID, PARSE_MOUNT } from 'src/config/keys'
+import logger from 'src/utils/logger'
 
 export const loadClassesFromSchemas = async (schemas = []) => {
   const parseConfig = new Config(APP_ID, PARSE_MOUNT)
