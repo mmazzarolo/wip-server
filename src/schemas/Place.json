@@ -12,12 +12,14 @@
     "address": { "type": "String" },
     "imageCover": { "type": "File" },
     "createdBy": { "type": "Pointer", "targetClass": "_User" },
-    "ownersRole": { "type": "Pointer", "targetClass": "_Role" }
+    "ownersRole": { "type": "Pointer", "targetClass": "_Role" },
+    "pushSubscribers": { "type": "Array" },
+    "emailSubscribers": { "type": "Array" }
   },
   "permissions": {
     "get": { "*": true },
     "find": { "*": true },
-    "create": { "*": true },
+    "create": {},
     "update": { "*": true },
     "delete": {},
     "addField": {}

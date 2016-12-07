@@ -1,5 +1,5 @@
 import Parse from 'parse/node'
-import { initializeParseSDK, createRoleIfNotExists, setParseLib } from 'parse-utils'
+import { setParseLib, initializeParseSDK, createRoleIfNotExists } from 'parse-utils'
 import '../src/index'
 
 // Stops if we have any change to do something harmful

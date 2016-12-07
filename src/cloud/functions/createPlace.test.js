@@ -2,6 +2,7 @@ import Parse from 'parse/node'
 import { after, before, describe, it } from 'mocha'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import { mockUser, mockPlace } from 'test/mocks'
 import { isUserInRole, getUserById } from 'parse-utils'
 
 const User = Parse.Object.extend('_User')
@@ -16,11 +17,7 @@ describe('createPlace', () => {
   let place
 
   before(async () => {
-    user = await new User()
-      .set('username', 'user')
-      .set('password', 'password')
-      .set('email', 'user@test.it')
-      .signUp()
+    user = await new User(mockUser).signUp()
   })
 
   after(async () => {
@@ -30,30 +27,8 @@ describe('createPlace', () => {
     await Parse.Object.destroyAll(places, { useMasterKey: true })
   })
 
-  it('fails: invalid place params', async () => {
-    const placeParams = {
-      name: 'I piaceri della carne'
-    }
-    return assert.isRejected(
-      Parse.Cloud.run('createPlace', { place: placeParams }, { sessionToken: user.getSessionToken() }),
-      new RegExp('The field "Description" is required')
-    )
-  })
-
   it('creates a Place successfully', async () => {
-    const placeParams = {
-      name: 'I piaceri della carne',
-      description: 'hello',
-      country: 'Italy',
-      province: 'BS',
-      phone: '0331 4108597',
-      town: 'Borgosatollo',
-      zipCode: '25010',
-      address: 'Via Capo le Case, 27',
-      email: 'DavideSabbatini@dayrep.com',
-      imageCover: { __type: 'File', name: 'img.png', url: 'http://localhost:1337/api/files/TEST_APP_ID/img.png' }
-    }
-    place = await Parse.Cloud.run('createPlace', { place: placeParams }, { sessionToken: user.getSessionToken() })
+    place = await Parse.Cloud.run('createPlace', { place: mockPlace }, { sessionToken: user.getSessionToken() })
     assert.isOk(place)
   })
 

@@ -1,5 +1,6 @@
 /* @flow */
 export type ParseUser = {
+  id: string;
   get: (name: string) => any;
   getSessionToken: () => string;
   set: (name: string, value: any) => ParseUser;
@@ -7,6 +8,7 @@ export type ParseUser = {
 }
 
 export type ParseObject = {
+  id: string;
   get: (name: string) => any;
   set: (name: string, value: any) => ParseObject;
   isNew: () => boolean;

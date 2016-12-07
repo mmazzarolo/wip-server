@@ -10,12 +10,11 @@ const Place = Parse.Object.extend('Place')
 export default async (req: ParseRequest, res: ParseResponse) => {
   try {
     const user = req.user
-    const userSessionToken = user.getSessionToken()
     const placeParams = req.params.place
     let place
 
     // Create the place
-    place = await new Place().save(placeParams, { sessionToken: userSessionToken })
+    place = await new Place().save(placeParams, { useMasterKey: true })
 
     // Create the place role
     const placeRole = new Role()
@@ -36,8 +35,8 @@ export default async (req: ParseRequest, res: ParseResponse) => {
 
     // Finalize the place ACL
     const placeACL = new Parse.ACL()
-    placeACL.setPublicReadAccess(false)
-    placeACL.setPublicWriteAccess(true)
+    placeACL.setPublicReadAccess(true)
+    placeACL.setPublicWriteAccess(false)
     placeACL.setRoleWriteAccess(placeRole, true)
     place.setACL(placeACL, {})
 

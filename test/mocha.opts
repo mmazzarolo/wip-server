@@ -1,4 +1,4 @@
-./test/*.test.js
+./src/**/*.test.js
 --compilers js:babel-core/register
 --recursive
 --delay
