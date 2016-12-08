@@ -1,0 +1,16 @@
+{
+  "name": "_User",
+  "schema": {
+    "ownersOf": { "type": "Array" },
+    "pushSubscriptions": { "type": "Array" },
+    "emailSubscriptions": { "type": "Array" }
+  },
+  "permissions": {
+    "get": { "*": true },
+    "find": { "*": true },
+    "create": { "*": true },
+    "update": { "*": true },
+    "delete": { "*": true },
+    "addField": {}
+  }
+}

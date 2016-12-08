@@ -4,11 +4,12 @@ const Parse = require('parse/node')
 const request = require('request-promise')
 
 const Place = Parse.Object.extend('Place')
+const User = Parse.Object.extend('_User')
 
 Parse.initialize('TEST_APP_ID', '', 'TEST_MASTER_KEY')
 Parse.serverURL = 'http://localhost:1337/api'
 
-const places = [
+const PLACES = [
   {
     name: 'I piaceri della carne',
     description: 'hello',
@@ -77,12 +78,35 @@ const places = [
   }
 ]
 
-const loadFakeData = (async () => {
+const USERNAME = 'matteo@themostaza.com'
+const PASSWORD = 'Mostaza1'
+
+const loginOrSignupUser = async () => {
+  try {
+    const user = await Parse.User.logIn(USERNAME, PASSWORD)
+    return user
+  } catch (err) {
+    if (err.message === 'Invalid username/password.') {
+      const user = await new User({
+        username: USERNAME,
+        email: USERNAME,
+        password: PASSWORD
+      }).signUp()
+      return user
+    } else {
+      throw err
+    }
+  }
+}
+
+const createPlaces = async (user) => {
   const IMAGE_WIDTH_PIXELS = 1024
   const IMAGE_HEIGHT_PIXELS = 640
-  const user = await Parse.User.logIn('matteo@themostaza.com', 'Mostaza1')
-  for (const place of places) {
-    const image = await request.get({ url: `https://unsplash.it/${IMAGE_WIDTH_PIXELS}/${IMAGE_HEIGHT_PIXELS}/?random`, encoding: null })
+  for (const place of PLACES) {
+    const image = await request.get({
+      url: `https://unsplash.it/${IMAGE_WIDTH_PIXELS}/${IMAGE_HEIGHT_PIXELS}/?random`,
+      encoding: null
+    })
     const imageCover = await new Parse.File(`image_${place.name}`, { base64: new Buffer(image).toString('base64') }, 'image/jpeg').save()
     const placeParam = {
       name: place.name,
@@ -96,11 +120,22 @@ const loadFakeData = (async () => {
       email: place.email,
       imageCover
     }
-    const response = await Parse.Cloud.run(
+    await Parse.Cloud.run(
       'createPlace',
       { place: placeParam },
       { sessionToken: user.getSessionToken() }
     )
+    console.log(`Place created: ${place.name}`)
   }
-  console.log('bin/loadFakeData ended')
+}
+
+const loadFakeData = (async () => {
+  try {
+    const user = await loginOrSignupUser()
+    console.log('User logged in')
+    await createPlaces(user)
+  } catch (err) {
+    console.log('bin/loadFakeData error: ', err.message || err)
+  }
+  console.log('bin/loadFakeData ended succesfully')
 })()
