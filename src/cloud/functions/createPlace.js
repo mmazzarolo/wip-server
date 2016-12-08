@@ -2,6 +2,8 @@
 import Parse from 'parse/node'
 import { createPointerFromId } from 'parse-utils'
 
+import logger from 'src/utils/logger'
+
 import type { ParseRequest, ParseResponse } from 'src/types/ParseServer'
 
 const Role = Parse.Object.extend('_Role')
@@ -54,7 +56,7 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     // Done
     return res.success(place)
   } catch (err) {
-    console.error(`Error: ${err.message}`)
+    logger.error(`Error: ${err.message}`)
     return res.error(err.message)
   }
 }

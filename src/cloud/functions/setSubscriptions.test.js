@@ -10,13 +10,15 @@ const Place = Parse.Object.extend('Place')
 chai.use(chaiAsPromised)
 const assert = chai.assert
 
-describe('subscribeUserToPlace', () => {
+describe('setSubscriptions', () => {
   let user
+  let sessionToken
   let place
 
   before(async () => {
     user = await new User(mockUser).signUp()
-    place = await Parse.Cloud.run('createPlace', { place: mockPlace }, { sessionToken: user.getSessionToken() })
+    sessionToken = user.getSessionToken()
+    place = await Parse.Cloud.run('createPlace', { place: mockPlace }, { sessionToken })
   })
 
   after(async () => {
@@ -31,7 +33,7 @@ describe('subscribeUserToPlace', () => {
       placeId: null
     }
     return assert.isRejected(
-      Parse.Cloud.run('subscribeUserToPlace', params, { sessionToken: user.getSessionToken() }),
+      Parse.Cloud.run('setSubscriptions', params, { sessionToken }),
       new RegExp('Missing placeId')
     )
   })
@@ -41,7 +43,7 @@ describe('subscribeUserToPlace', () => {
       placeId: '1'
     }
     return assert.isRejected(
-      Parse.Cloud.run('subscribeUserToPlace', params, { sessionToken: user.getSessionToken() }),
+      Parse.Cloud.run('setSubscriptions', params, { sessionToken }),
       new RegExp('Missing subscriptionType')
     )
   })
@@ -52,21 +54,21 @@ describe('subscribeUserToPlace', () => {
       subscriptionTypes: ['PUSH', 'INVALID']
     }
     return assert.isRejected(
-      Parse.Cloud.run('subscribeUserToPlace', params, { sessionToken: user.getSessionToken() }),
+      Parse.Cloud.run('setSubscriptions', params, { sessionToken }),
       new RegExp('Invalid subscriptionType')
     )
   })
 
-  it('subscribe the user successfully', async () => {
+  it('subscribe the user by push and email successfully', async () => {
     const params = {
       placeId: place.id,
       subscriptionTypes: ['PUSH', 'EMAIL']
     }
-    const result = await Parse.Cloud.run('subscribeUserToPlace', params, { sessionToken: user.getSessionToken() })
+    const result = await Parse.Cloud.run('setSubscriptions', params, { sessionToken })
     assert.isOk(result)
   })
 
-  it('checks the user and place subscription', async () => {
+  it('checks that the user is subscribed correctly by push and email', async () => {
     user = await new Parse.Query(User)
       .equalTo('objectId', user.id)
       .first()
@@ -82,5 +84,30 @@ describe('subscribeUserToPlace', () => {
     assert.equal(place.get('emailSubscribers').length, 1)
     assert.equal(place.get('pushSubscribers')[0].id, user.id)
     assert.equal(place.get('emailSubscribers')[0].id, user.id)
+  })
+
+  it('unsubscribe the user by email successfully', async () => {
+    const params = {
+      placeId: place.id,
+      subscriptionTypes: ['PUSH']
+    }
+    const result = await Parse.Cloud.run('setSubscriptions', params, { sessionToken })
+    assert.isOk(result)
+  })
+
+  it('checks that the user is no more subscribed by email', async () => {
+    user = await new Parse.Query(User)
+      .equalTo('objectId', user.id)
+      .first()
+    place = await new Parse.Query(Place)
+      .equalTo('objectId', place.id)
+      .first()
+
+    assert.equal(user.get('pushSubscriptions').length, 1)
+    assert.equal(user.get('emailSubscriptions').length, 0)
+    assert.equal(user.get('pushSubscriptions')[0].id, place.id)
+    assert.equal(place.get('pushSubscribers').length, 1)
+    assert.equal(place.get('emailSubscribers').length, 0)
+    assert.equal(place.get('pushSubscribers')[0].id, user.id)
   })
 })
