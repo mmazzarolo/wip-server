@@ -13,6 +13,7 @@
     "imageCover": { "type": "File" },
     "createdBy": { "type": "Pointer", "targetClass": "_User" },
     "ownersRole": { "type": "Pointer", "targetClass": "_Role" },
+    "availableSubscriptions": { "type": "Array" },
     "pushSubscribers": { "type": "Array" },
     "emailSubscribers": { "type": "Array" }
   },

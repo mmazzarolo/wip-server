@@ -73,7 +73,7 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     ])
 
     // Done
-    return res.success('success')
+    return res.success({ pushSubscriptions, emailSubscriptions })
   } catch (err) {
     logger.error(`Error: ${err.message}`)
     return res.error(err.message)

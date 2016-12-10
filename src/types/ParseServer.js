@@ -1,4 +1,5 @@
 /* @flow */
+
 export type ParseUser = {
   id: string;
   get: (name: string) => any;
