@@ -1,0 +1,19 @@
+{
+  "name": "Post",
+  "schema": {
+    "title": { "type": "String" },
+    "content": { "type": "String" },
+    "place": { "type": "Pointer", "targetClass": "Place" },
+    "ownersRole": { "type": "Pointer", "targetClass": "_Role" },
+    "createdBy": { "type": "Pointer", "targetClass": "_User" },
+    "deliveryStatus": { "type": "String" }
+  },
+  "permissions": {
+    "get": { "*": true },
+    "find": { "*": true },
+    "create": {},
+    "update": { "*": true },
+    "delete": {},
+    "addField": {}
+  }
+}
