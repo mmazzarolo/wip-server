@@ -51,6 +51,7 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     post = new Post()
     post.set('title', postTitle)
     post.set('content', postContent)
+    post.set('place', place)
     post.set('createdBy', user)
     post.set('ownersRole', placeRole)
 

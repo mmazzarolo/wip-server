@@ -87,6 +87,7 @@ describe('createPost', () => {
       .first()
 
     assert.equal(post.get('title'), 'I am the title')
+    assert.equal(post.get('place').id, place.id)
     assert.equal(post.get('content'), 'I am the content')
     assert.equal(post.get('createdBy').id, authorizedUser.id)
     assert.equal(placeRole.get('name'), `placeOwner_${place.id}`)

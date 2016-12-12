@@ -2,6 +2,7 @@
 console.log('bin/loadFakeData started')
 const Parse = require('parse/node')
 const request = require('request-promise')
+const random = require('lodash/random')
 
 const Place = Parse.Object.extend('Place')
 const User = Parse.Object.extend('_User')
@@ -102,6 +103,7 @@ const loginOrSignupUser = async () => {
 const createPlaces = async (user) => {
   const IMAGE_WIDTH_PIXELS = 1024
   const IMAGE_HEIGHT_PIXELS = 640
+  const createdPlaces = []
   for (const place of PLACES) {
     const image = await request.get({
       url: `https://unsplash.it/${IMAGE_WIDTH_PIXELS}/${IMAGE_HEIGHT_PIXELS}/?random`,
@@ -120,20 +122,42 @@ const createPlaces = async (user) => {
       email: place.email,
       imageCover
     }
-    await Parse.Cloud.run(
+    const createdPlace = await Parse.Cloud.run(
       'createPlace',
       { place: placeParam },
       { sessionToken: user.getSessionToken() }
     )
+    createdPlaces.push(createdPlace)
     console.log(`Place created: ${place.name}`)
+  }
+  return createdPlaces
+}
+
+const createPosts = async (user, places) => {
+  for (const place of places) {
+    const numberOfPostsToCreate = random(0, 3)
+    const jokes = await request.get({
+      url: `http://api.icndb.com/jokes/random/${numberOfPostsToCreate}`,
+      json: true
+    })
+    for (const joke of jokes.value) {
+      await Parse.Cloud.run(
+        'createPost',
+        { placeId: place.id, postTitle: `Hey ${joke.id}`, postContent: joke.joke },
+        { sessionToken: user.getSessionToken() }
+      )
+    }
   }
 }
 
 const loadFakeData = (async () => {
   try {
     const user = await loginOrSignupUser()
-    console.log('User logged in')
-    await createPlaces(user)
+    console.log('==> User logged in')
+    const places = await createPlaces(user)
+    console.log('==> Places created')
+    await createPosts(user, places)
+    console.log('==> Random post created')
   } catch (err) {
     console.log('bin/loadFakeData error: ', err.message || err)
   }
