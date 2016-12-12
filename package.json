@@ -33,7 +33,7 @@
     "mongodb-runner": "^3.4.0",
     "parse": "1.9.2",
     "parse-server": "^2.3.1",
-    "parse-utils": "^2.5.1",
+    "parse-utils": "^2.9.0",
     "request": "^2.79.0",
     "request-promise": "^4.1.1",
     "validator": "^6.2.0"

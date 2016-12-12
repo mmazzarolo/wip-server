@@ -18,26 +18,20 @@ export default async (req: ParseRequest, res: ParseResponse) => {
   try {
     const requestUser = req.user
     const requestParams: params = req.params
-    const { placeId, postTitle, postContent } = requestParams
-
     let post
 
     // Params validation
-    if (!placeId) {
-      throw new Error('Missing placeId')
-    }
-
-    if (!postTitle) {
-      throw new Error('Missing postTitle')
-    }
-
-    if (!postContent) {
-      throw new Error('Missing postContent')
-    }
+    const paramsNames = ['placeId', 'postTitle', 'postContent']
+    paramsNames.forEach((paramName) => {
+      if (!requestParams[paramName]) {
+        throw new Error(`Missing param: ${paramName}`)
+      }
+    })
+    const { placeId, postTitle, postContent } = requestParams
 
     // Obtain the Place
     const place = await new Parse.Query('Place')
-      .equalTo('objectId', requestParams.placeId)
+      .equalTo('objectId', placeId)
       .include('ownersRole')
       .first()
 
@@ -57,8 +51,8 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     post = new Post()
     post.set('title', postTitle)
     post.set('content', postContent)
-    place.set('createdBy', user)
-    place.set('ownersRole', placeRole)
+    post.set('createdBy', user)
+    post.set('ownersRole', placeRole)
 
     // Set the Post ACL
     const postACL = new Parse.ACL()
