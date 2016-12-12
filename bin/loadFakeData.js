@@ -20,7 +20,8 @@ const PLACES = [
     town: 'Borgosatollo',
     zipCode: '25010',
     address: 'Via Capo le Case, 27',
-    email: 'DavideSabbatini@dayrep.com'
+    email: 'DavideSabbatini@dayrep.com',
+    availableSubscriptions: ['EMAIL', 'PUSH']
   },
   {
     name: 'Osteria della Madonna',
@@ -31,7 +32,8 @@ const PLACES = [
     town: 'Villamar',
     zipCode: '09020',
     address: 'Via degli Aldobrandeschi, 132',
-    email: 'UbertoDavide@dayrep.com'
+    email: 'UbertoDavide@dayrep.com',
+    availableSubscriptions: ['EMAIL', 'PUSH']
   },
   {
     name: 'La Locanda del Chierichetto',
@@ -42,7 +44,8 @@ const PLACES = [
     town: 'Riva Presso Chieri',
     zipCode: '10020',
     address: 'Via Volto San Luca, 88',
-    email: 'AnnaMariaSabbatini@rhyta.com'
+    email: 'AnnaMariaSabbatini@rhyta.com',
+    availableSubscriptions: ['PUSH']
   },
   {
     name: 'Dai vecchietti di minchiapitittu',
@@ -53,7 +56,8 @@ const PLACES = [
     town: 'Ulassai',
     zipCode: '08040',
     address: 'Via Croce Rossa',
-    email: 'CatenaMilanesi@rhyta.com'
+    email: 'CatenaMilanesi@rhyta.com',
+    availableSubscriptions: ['EMAIL']
   },
   {
     name: 'Braci e abbracci',
@@ -64,7 +68,8 @@ const PLACES = [
     town: 'Calcio',
     zipCode: '24054',
     address: 'Strada Provinciale 65, 8',
-    email: 'QuartoBaresi@dayrep.com'
+    email: 'QuartoBaresi@dayrep.com',
+    availableSubscriptions: ['EMAIL', 'PUSH']
   },
   {
     name: 'Alla Ghiacciaia',
@@ -75,7 +80,8 @@ const PLACES = [
     town: 'Scido',
     zipCode: '89010',
     address: 'Via Giulio Camuzzoni, 32',
-    email: 'IvoneDellucci@armyspy.com'
+    email: 'IvoneDellucci@armyspy.com',
+    availableSubscriptions: ['EMAIL', 'PUSH']
   }
 ]
 
@@ -120,6 +126,7 @@ const createPlaces = async (user) => {
       zipCode: place.zipCode,
       address: place.address,
       email: place.email,
+      availableSubscriptions: place.availableSubscriptions,
       imageCover
     }
     const createdPlace = await Parse.Cloud.run(
