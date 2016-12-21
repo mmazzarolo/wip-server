@@ -8,11 +8,8 @@ import createPlace from 'src/cloud/functions/createPlace'
 import createPost from 'src/cloud/functions/createPost'
 import setSubscriptions from 'src/cloud/functions/setSubscriptions'
 
-const User = Parse.Object.extend('_User')
-const Place = Parse.Object.extend('Place')
-
-Parse.Cloud.beforeSave(Place, beforeSavePlace)
-Parse.Cloud.beforeSave(User, beforeSaveUser)
+Parse.Cloud.beforeSave('Place', beforeSavePlace)
+Parse.Cloud.beforeSave('_User', beforeSaveUser)
 
 Parse.Cloud.define('createPlace', createPlace)
 Parse.Cloud.define('setSubscriptions', setSubscriptions)

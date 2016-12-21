@@ -6,8 +6,6 @@ import logger from 'src/utils/logger'
 
 import type { ParseRequest, ParseResponse } from 'src/types/ParseServer'
 
-const Post = Parse.Object.extend('Post')
-
 type params = {
   placeId: ?string,
   postTitle: ?string,
@@ -30,15 +28,21 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     const { placeId, postTitle, postContent } = requestParams
 
     // Obtain the Place
-    const place = await new Parse.Query('Place')
+    const place: ?Parse.Object = await new Parse.Query('Place')
       .equalTo('objectId', placeId)
       .include('ownersRole')
       .first()
+    if (!place) {
+      throw new Error('Place not found')
+    }
 
     // Obtain the User
-    const user = await new Parse.Query('User')
+    const user: ?Parse.Object = await new Parse.Query('User')
       .equalTo('objectId', requestUser.id)
       .first()
+    if (!user) {
+      throw new Error('Invalid user')
+    }
 
     // Check user permissions
     const placeRole = place.get('ownersRole')
@@ -48,7 +52,7 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     }
 
     // Create the Post
-    post = new Post()
+    post = new Parse.Object('Post')
     post.set('title', postTitle)
     post.set('content', postContent)
     post.set('place', place)

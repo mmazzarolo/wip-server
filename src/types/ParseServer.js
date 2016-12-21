@@ -1,24 +1,9 @@
 /* @flow */
-
-export type ParseUser = {
-  id: string;
-  get: (name: string) => any;
-  getSessionToken: () => string;
-  set: (name: string, value: any) => ParseUser;
-  save: (savedValues: ?Object, params: ?Object) => ParseUser;
-}
-
-export type ParseObject = {
-  id: string;
-  get: (name: string) => any;
-  set: (name: string, value: any) => ParseObject;
-  isNew: () => boolean;
-  save: (savedValues: ?Object, params: ?Object) => ParseObject;
-}
+import Parse from 'parse/node'
 
 export type ParseRequest = {
-  user: ParseUser;
-  object: ParseObject;
+  user: Parse.User;
+  object: Parse.Object;
   params: Object;
   master: boolean;
 }

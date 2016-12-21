@@ -35,9 +35,12 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     }
 
     // Obtain the Place
-    const place = await new Parse.Query('Place')
+    const place: ?Parse.Object = await new Parse.Query('Place')
       .equalTo('objectId', requestParams.placeId)
       .first()
+    if (!place) {
+      throw new Error('Place not found')
+    }
 
     // Update the push notifications settings
     const enablePushSubscription: bool = _.includes(subscriptionTypes, 'PUSH')
@@ -68,8 +71,8 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     place.set('emailSubscribers', emailSubscribers)
 
     await Promise.all([
-      user.save(null, { sessionToken }),
-      place.save(null, { sessionToken })
+      place.save(null, { sessionToken }),
+      user.save(null, { sessionToken })
     ])
 
     // Done

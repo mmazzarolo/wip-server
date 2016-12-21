@@ -6,9 +6,6 @@ import logger from 'src/utils/logger'
 
 import type { ParseRequest, ParseResponse } from 'src/types/ParseServer'
 
-const Role = Parse.Object.extend('_Role')
-const Place = Parse.Object.extend('Place')
-
 export default async (req: ParseRequest, res: ParseResponse) => {
   try {
     const user = req.user
@@ -16,10 +13,10 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     let place
 
     // Create the place
-    place = await new Place().save(placeParams, { useMasterKey: true })
+    place = await new Parse.Object('Place').save(placeParams, { useMasterKey: true })
 
     // Create the place role
-    const placeRole = new Role()
+    const placeRole = new Parse.Role()
     placeRole.set('name', `placeOwner_${place.id}`)
     placeRole.relation('users').add(user)
     const placeRoleACL = new Parse.ACL()
@@ -29,9 +26,12 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     await placeRole.save(null, { useMasterKey: true })
 
     // Add the place role to the placeOwner one
-    const placeOwnerRole = await new Parse.Query(Role)
+    const placeOwnerRole: ?Parse.Object = await new Parse.Query('_Role')
       .equalTo('name', 'placeOwner')
       .first()
+    if (!placeOwnerRole) {
+      throw new Error('PlaceOwnerRole not found')
+    }
     placeOwnerRole.relation('roles').add(placeRole)
     await placeOwnerRole.save(null, { useMasterKey: true })
 
@@ -48,7 +48,7 @@ export default async (req: ParseRequest, res: ParseResponse) => {
     place = await place.save(null, { useMasterKey: true })
 
     // Add the place to the user owned places
-    const ownedPlaces: Array<any> = user.get('ownedPlaces') || []
+    const ownedPlaces: Array<Parse.Object> = user.get('ownedPlaces') || []
     ownedPlaces.push(createPointerFromId('Place', place.id))
     user.set('ownedPlaces', ownedPlaces)
     await user.save(null, { useMasterKey: true })
