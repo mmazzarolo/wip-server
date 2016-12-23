@@ -1,19 +1,19 @@
 {
-  "name": "news-plane-server",
+  "name": "wip-server",
   "version": "1.0.0",
-  "description": "News Plane Server",
+  "description": "WIP Server",
   "main": "index.js",
   "author": "Mazzarolo Matteo",
   "license": "ISC",
   "scripts": {
     "start": "node index.js",
-    "lint": "eslint src test",
-    "pretest": "./node_modules/.bin/mongodb-runner start",
+    "lint": "eslint src test bin",
+    "pretest": "mongodb-runner start",
     "test": "NODE_ENV=test mocha",
     "test:watch": "npm run test -- --watch",
-    "posttest": "./node_modules/.bin/mongodb-runner stop",
+    "posttest": "mongodb-runner stop",
     "reset": "rm -rf node_modules/ && npm cache clean && npm prune",
-    "flow": "flow"
+    "flow": "flow src"
   },
   "dependencies": {
     "babel-plugin-module-resolver": "2.4.0",
@@ -46,6 +46,6 @@
     "eslint-config-mostaza-base": "1.14.0",
     "eslint-import-resolver-babel-module": "2.2.1",
     "eslint-plugin-import": "2.2.0",
-    "flow-bin": "0.37.0"
+    "flow-bin": "0.37.4"
   }
 }

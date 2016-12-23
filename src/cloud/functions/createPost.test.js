@@ -1,13 +1,9 @@
+/* @flow */
 import Parse from 'parse/node'
 import { after, before, describe, it } from 'mocha'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { mockUser, mockPlace } from 'test/mocks'
-
-const User = Parse.Object.extend('_User')
-const Role = Parse.Object.extend('_Role')
-const Place = Parse.Object.extend('Place')
-const Post = Parse.Object.extend('Post')
 
 chai.use(chaiAsPromised)
 const assert = chai.assert
@@ -15,28 +11,31 @@ const assert = chai.assert
 describe('createPost', () => {
   let authorizedUser
   let unauthorizedUser
-  let place
-  let post
+  let placeId
+  let postId
 
   before(async () => {
-    authorizedUser = await new User(mockUser).signUp()
-    unauthorizedUser = await new User({
+    authorizedUser = await new Parse.User(mockUser).signUp()
+    unauthorizedUser = await new Parse.User({
       username: 'unauthorized@test.com',
       password: 'unauthorized'
     }).signUp()
-    place = await Parse.Cloud.run(
+    const place = await Parse.Cloud.run(
       'createPlace',
       { place: mockPlace },
       { sessionToken: authorizedUser.getSessionToken() }
     )
+    placeId = place.id
   })
 
   after(async () => {
-    const users = await new Parse.Query(User).find()
+    const users = await new Parse.Query('_User').find()
     await Parse.Object.destroyAll(users, { useMasterKey: true })
-    const places = await new Parse.Query(Place).find()
+    const roles = await new Parse.Query('_Role').find()
+    await Parse.Object.destroyAll(roles, { useMasterKey: true })
+    const places = await new Parse.Query('Place').find()
     await Parse.Object.destroyAll(places, { useMasterKey: true })
-    const posts = await new Parse.Query(Post).find()
+    const posts = await new Parse.Query('Post').find()
     await Parse.Object.destroyAll(posts, { useMasterKey: true })
   })
 
@@ -54,7 +53,7 @@ describe('createPost', () => {
 
   it('fails: unauthorized user', async () => {
     const params = {
-      placeId: place.id,
+      placeId,
       postTitle: 'I am the title',
       postContent: 'I am the content'
     }
@@ -65,31 +64,36 @@ describe('createPost', () => {
     )
   })
 
-  it('creates the place successfully', async () => {
+  it('creates the post successfully', async () => {
     const params = {
-      placeId: place.id,
+      placeId,
       postTitle: 'I am the title',
       postContent: 'I am the content'
     }
     const options = { sessionToken: authorizedUser.getSessionToken() }
-    post = await Parse.Cloud.run('createPost', params, options)
-    assert.isOk(post)
+    const result = await Parse.Cloud.run('createPost', params, options)
+    assert.isOk(result)
   })
 
   it('checks that the post can be fetched and has the right values', async () => {
-    post = await new Parse.Query(Post)
-      .equalTo('objectId', post.id)
+    const post = await new Parse.Query('Post')
+      .equalTo('postTitle', 'I am the title')
       .first({ sessionToken: authorizedUser.getSessionToken() })
 
+    if (!post) throw new Error('post not found')
+
     const placeRoleId = post.get('ownersRole').id
-    const placeRole = await new Parse.Query(Role)
+    const placeRole = await new Parse.Query('_Role')
       .equalTo('objectId', placeRoleId)
       .first()
 
+    if (!placeRole) {
+      throw new Error('placeRole not found')
+    }
     assert.equal(post.get('title'), 'I am the title')
-    assert.equal(post.get('place').id, place.id)
+    assert.equal(post.get('place').id, placeId)
     assert.equal(post.get('content'), 'I am the content')
     assert.equal(post.get('createdBy').id, authorizedUser.id)
-    assert.equal(placeRole.get('name'), `placeOwner_${place.id}`)
+    assert.equal(placeRole.get('name'), `placeOwner_${placeId}`)
   })
 })

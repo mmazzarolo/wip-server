@@ -1,8 +1,9 @@
+/* @flow */
 import Parse from 'parse/node'
 import { setParseLib, initializeParseSDK, createRoleIfNotExists } from 'parse-utils'
 import '../src/index'
 
-// Stops if we have any change to do something harmful
+// Stops if we have any chance to do something harmful
 if (process.env.MASTER_KEY) throw new Error('Invalid test environment')
 
 const setup = (async () => { // eslint-disable-line

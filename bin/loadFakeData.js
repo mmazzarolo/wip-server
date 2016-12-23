@@ -1,14 +1,13 @@
 #!/usr/bin/env node
+/* @flow */
 console.log('bin/loadFakeData started')
 const Parse = require('parse/node')
 const request = require('request-promise')
 const random = require('lodash/random')
+const parseUtils = require('parse-utils')
 
-const Place = Parse.Object.extend('Place')
-const User = Parse.Object.extend('_User')
-
-Parse.initialize('TEST_APP_ID', '', 'TEST_MASTER_KEY')
-Parse.serverURL = 'http://localhost:1337/api'
+parseUtils.setParseLib(Parse)
+parseUtils.initializeParseSDK('http://localhost:1337/api', 'TEST_APP_ID', 'TEST_MASTER_KEY')
 
 const PLACES = [
   {
@@ -94,7 +93,7 @@ const loginOrSignupUser = async () => {
     return user
   } catch (err) {
     if (err.message === 'Invalid username/password.') {
-      const user = await new User({
+      const user = await new Parse.User({
         username: USERNAME,
         email: USERNAME,
         password: PASSWORD
@@ -157,7 +156,7 @@ const createPosts = async (user, places) => {
   }
 }
 
-const loadFakeData = (async () => {
+const loadFakeData = (async () => { // eslint-disable-line
   try {
     const user = await loginOrSignupUser()
     console.log('==> User logged in')

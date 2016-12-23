@@ -1,3 +1,4 @@
+/* @flow */
 export const mockUser = {
   username: 'user',
   password: 'password',

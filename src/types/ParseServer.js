@@ -2,19 +2,19 @@
 import Parse from 'parse/node'
 
 export type ParseRequest = {
-  user: Parse.User;
-  object: Parse.Object;
-  params: Object;
-  master: boolean;
+  user: Parse.User,
+  object: Parse.Object,
+  params: Object,
+  master: boolean
 }
 
 export type ParseResponse = {
-  success: (value: any) => void;
-  error: (value: any) => void;
+  success: (value: any) => void,
+  error: (value: any) => void,
 }
 
 export type ParsePointer = {
-  __type: string;
-  className: string;
-  objectId: string;
+  __type: string,
+  className: string,
+  objectId: string
 }

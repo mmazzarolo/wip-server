@@ -1,30 +1,28 @@
+/* @flow */
 import Parse from 'parse/node'
 import { after, before, describe, it } from 'mocha'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { mockUser, mockPlace } from 'test/mocks'
 
-const User = Parse.Object.extend('_User')
-const Place = Parse.Object.extend('Place')
-
 chai.use(chaiAsPromised)
 const assert = chai.assert
 
 describe('setSubscriptions', () => {
-  let user
+  let authenticatedUser
   let sessionToken
-  let place
+  let interestedplace
 
   before(async () => {
-    user = await new User(mockUser).signUp()
+    user = await new Parse.User(mockUser).signUp()
     sessionToken = user.getSessionToken()
     place = await Parse.Cloud.run('createPlace', { place: mockPlace }, { sessionToken })
   })
 
   after(async () => {
-    const users = await new Parse.Query(User).find()
+    const users = await new Parse.Query('_User').find()
     await Parse.Object.destroyAll(users, { useMasterKey: true })
-    const places = await new Parse.Query(Place).find()
+    const places = await new Parse.Query('Place').find()
     await Parse.Object.destroyAll(places, { useMasterKey: true })
   })
 
@@ -69,13 +67,18 @@ describe('setSubscriptions', () => {
   })
 
   it('checks that the user is subscribed correctly by push and email', async () => {
-    user = await new Parse.Query(User)
-      .equalTo('objectId', user.id)
+    user = await new Parse.Query('_User')
+      .equalTo('email', mockUser.email)
       .first()
-    place = await new Parse.Query(Place)
-      .equalTo('objectId', place.id)
+    if (!user) {
+      throw new Error('user not found')
+    }
+    place = await new Parse.Query('Place')
+      .equalTo('name', mockPlace.name)
       .first()
-
+    if (!place) {
+      throw new Error('post not found')
+    }
     assert.equal(user.get('pushSubscriptions').length, 1)
     assert.equal(user.get('emailSubscriptions').length, 1)
     assert.equal(user.get('pushSubscriptions')[0].id, place.id)
@@ -96,13 +99,18 @@ describe('setSubscriptions', () => {
   })
 
   it('checks that the user is no more subscribed by email', async () => {
-    user = await new Parse.Query(User)
-      .equalTo('objectId', user.id)
+    user = await new Parse.Query('_User')
+      .equalTo('email', mockUser.email)
       .first()
+    if (!user) {
+      throw new Error('user not found')
+    }
     place = await new Parse.Query(Place)
-      .equalTo('objectId', place.id)
+      .equalTo('name', mockPlace.name)
       .first()
-
+    if (!place) {
+      throw new Error('post not found')
+    }
     assert.equal(user.get('pushSubscriptions').length, 1)
     assert.equal(user.get('emailSubscriptions').length, 0)
     assert.equal(user.get('pushSubscriptions')[0].id, place.id)
