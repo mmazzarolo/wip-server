@@ -17,5 +17,5 @@ export default {
   ALREADY_IN_USE_FISCAL_CODE: 'fiscalCode already in use',
   CSV_EMPTY_FULL_NAME: 'Nome completo assente',
   CSV_EMPTY_FISCAL_CODE: 'Codice fiscale assente',
-  CSV_DUPLICATE_FISCAL_CODE: 'Codice fiscale duplicato'
-}
+  CSV_DUPLICATE_FISCAL_CODE: 'Codice fiscale duplicato',
+};

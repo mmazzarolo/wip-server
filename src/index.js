@@ -1,15 +1,15 @@
 /* @flow */
-import express from 'express'
-import { ParseServer } from 'parse-server'
-import { createRoleIfNotExists, loadClassesFromSchemas } from 'parse-utils'
-import ParseConfig from 'parse-server/lib/Config'
+import express from 'express';
+import { ParseServer } from 'parse-server';
+import { createRoleIfNotExists, loadClassesFromSchemas } from 'parse-utils';
+import ParseConfig from 'parse-server/lib/Config';
 
-import logger from 'src/utils/logger'
-import keys from 'src/config/keys'
-import schemas from 'src/schemas'
+import logger from 'src/utils/logger';
+import keys from 'src/config/keys';
+import schemas from 'src/schemas';
 
 // Create the express app
-const app = express()
+const app = express();
 
 const parseServer = new ParseServer({
   appName: keys.APP_NAME,
@@ -22,26 +22,20 @@ const parseServer = new ParseServer({
   publicServerURL: keys.SERVER_URL,
   allowClientClassCreation: false,
   silent: keys.IS_ENV_TEST,
-  enableAnonymousUsers: false
-})
+  enableAnonymousUsers: false,
+});
 
 // Serve the Parse API
-app.use(keys.PARSE_MOUNT, parseServer)
+app.use(keys.PARSE_MOUNT, parseServer);
 
 // Start the server
 app.listen(keys.PORT, async () => {
-  const parseConfig = new ParseConfig(keys.APP_ID, keys.PARSE_MOUNT)
-  await createRoleIfNotExists('placeOwner', { useMasterKey: true })
-  await loadClassesFromSchemas(parseConfig.database, schemas, true)
-  logger.log('[Parse-Server] Initialization completed: up and running.')
-  logger.log(`${keys.APP_NAME} running on port ${keys.PORT}.`)
-})
-
-// Fix for unhandled promise errors
-process.on('unhandledRejection', (reason, p) => {
-  console.error('Unhandled promise error', reason, p) // log all your errors, 'unsuppressing' them.
-  throw reason // optional, in case you want to treat these as errors
-})
+  const parseConfig = new ParseConfig(keys.APP_ID, keys.PARSE_MOUNT);
+  await createRoleIfNotExists('placeOwner', { useMasterKey: true });
+  await loadClassesFromSchemas(parseConfig.database, schemas, true);
+  logger.log('[Parse-Server] Initialization completed: up and running.');
+  logger.log(`${keys.APP_NAME} running on port ${keys.PORT}.`);
+});
 
 // Export the app for testing
-export default app
+export default app;

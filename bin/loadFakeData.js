@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /* @flow */
-console.log('bin/loadFakeData started')
-const Parse = require('parse/node')
-const request = require('request-promise')
-const random = require('lodash/random')
-const parseUtils = require('parse-utils')
+console.log('bin/loadFakeData started');
+const Parse = require('parse/node');
+const request = require('request-promise');
+const random = require('lodash/random');
+const parseUtils = require('parse-utils');
 
-parseUtils.setParseLib(Parse)
-parseUtils.initializeParseSDK('http://localhost:1337/api', 'TEST_APP_ID', 'TEST_MASTER_KEY')
+parseUtils.setParseLib(Parse);
+parseUtils.initializeParseSDK('http://localhost:1337/api', 'TEST_APP_ID', 'TEST_MASTER_KEY');
 
 const PLACES = [
   {
@@ -20,7 +20,7 @@ const PLACES = [
     zipCode: '25010',
     address: 'Via Capo le Case, 27',
     email: 'DavideSabbatini@dayrep.com',
-    availableSubscriptions: ['EMAIL', 'PUSH']
+    availableSubscriptions: ['EMAIL', 'PUSH'],
   },
   {
     name: 'Osteria della Madonna',
@@ -32,7 +32,7 @@ const PLACES = [
     zipCode: '09020',
     address: 'Via degli Aldobrandeschi, 132',
     email: 'UbertoDavide@dayrep.com',
-    availableSubscriptions: ['EMAIL', 'PUSH']
+    availableSubscriptions: ['EMAIL', 'PUSH'],
   },
   {
     name: 'La Locanda del Chierichetto',
@@ -44,7 +44,7 @@ const PLACES = [
     zipCode: '10020',
     address: 'Via Volto San Luca, 88',
     email: 'AnnaMariaSabbatini@rhyta.com',
-    availableSubscriptions: ['PUSH']
+    availableSubscriptions: ['PUSH'],
   },
   {
     name: 'Dai vecchietti di minchiapitittu',
@@ -56,7 +56,7 @@ const PLACES = [
     zipCode: '08040',
     address: 'Via Croce Rossa',
     email: 'CatenaMilanesi@rhyta.com',
-    availableSubscriptions: ['EMAIL']
+    availableSubscriptions: ['EMAIL'],
   },
   {
     name: 'Braci e abbracci',
@@ -68,7 +68,7 @@ const PLACES = [
     zipCode: '24054',
     address: 'Strada Provinciale 65, 8',
     email: 'QuartoBaresi@dayrep.com',
-    availableSubscriptions: ['EMAIL', 'PUSH']
+    availableSubscriptions: ['EMAIL', 'PUSH'],
   },
   {
     name: 'Alla Ghiacciaia',
@@ -80,41 +80,45 @@ const PLACES = [
     zipCode: '89010',
     address: 'Via Giulio Camuzzoni, 32',
     email: 'IvoneDellucci@armyspy.com',
-    availableSubscriptions: ['EMAIL', 'PUSH']
-  }
-]
+    availableSubscriptions: ['EMAIL', 'PUSH'],
+  },
+];
 
-const USERNAME = 'matteo@themostaza.com'
-const PASSWORD = 'Mostaza1'
+const USERNAME = 'matteo@themostaza.com';
+const PASSWORD = 'Mostaza1';
 
 const loginOrSignupUser = async () => {
   try {
-    const user = await Parse.User.logIn(USERNAME, PASSWORD)
-    return user
+    const user = await Parse.User.logIn(USERNAME, PASSWORD);
+    return user;
   } catch (err) {
     if (err.message === 'Invalid username/password.') {
       const user = await new Parse.User({
         username: USERNAME,
         email: USERNAME,
-        password: PASSWORD
-      }).signUp()
-      return user
+        password: PASSWORD,
+      }).signUp();
+      return user;
     } else {
-      throw err
+      throw err;
     }
   }
-}
+};
 
-const createPlaces = async (user) => {
-  const IMAGE_WIDTH_PIXELS = 1024
-  const IMAGE_HEIGHT_PIXELS = 640
-  const createdPlaces = []
+const createPlaces = async user => {
+  const IMAGE_WIDTH_PIXELS = 1024;
+  const IMAGE_HEIGHT_PIXELS = 640;
+  const createdPlaces = [];
   for (const place of PLACES) {
     const image = await request.get({
       url: `https://unsplash.it/${IMAGE_WIDTH_PIXELS}/${IMAGE_HEIGHT_PIXELS}/?random`,
-      encoding: null
-    })
-    const imageCover = await new Parse.File(`image_${place.name}`, { base64: new Buffer(image).toString('base64') }, 'image/jpeg').save()
+      encoding: null,
+    });
+    const imageCover = await new Parse.File(
+      `image_${place.name}`,
+      { base64: new Buffer(image).toString('base64') },
+      'image/jpeg',
+    ).save();
     const placeParam = {
       name: place.name,
       description: place.description,
@@ -126,46 +130,47 @@ const createPlaces = async (user) => {
       address: place.address,
       email: place.email,
       availableSubscriptions: place.availableSubscriptions,
-      imageCover
-    }
+      imageCover,
+    };
     const createdPlace = await Parse.Cloud.run(
       'createPlace',
       { place: placeParam },
-      { sessionToken: user.getSessionToken() }
-    )
-    createdPlaces.push(createdPlace)
-    console.log(`Place created: ${place.name}`)
+      { sessionToken: user.getSessionToken() },
+    );
+    createdPlaces.push(createdPlace);
+    console.log(`Place created: ${place.name}`);
   }
-  return createdPlaces
-}
+  return createdPlaces;
+};
 
 const createPosts = async (user, places) => {
   for (const place of places) {
-    const numberOfPostsToCreate = random(0, 3)
+    const numberOfPostsToCreate = random(0, 3);
     const jokes = await request.get({
       url: `http://api.icndb.com/jokes/random/${numberOfPostsToCreate}`,
-      json: true
-    })
+      json: true,
+    });
     for (const joke of jokes.value) {
       await Parse.Cloud.run(
         'createPost',
         { placeId: place.id, postTitle: `Hey ${joke.id}`, postContent: joke.joke },
-        { sessionToken: user.getSessionToken() }
-      )
+        { sessionToken: user.getSessionToken() },
+      );
     }
   }
-}
+};
 
-const loadFakeData = (async () => { // eslint-disable-line
+const loadFakeData = (async () => {
+  // eslint-disable-line
   try {
-    const user = await loginOrSignupUser()
-    console.log('==> User logged in')
-    const places = await createPlaces(user)
-    console.log('==> Places created')
-    await createPosts(user, places)
-    console.log('==> Random post created')
+    const user = await loginOrSignupUser();
+    console.log('==> User logged in');
+    const places = await createPlaces(user);
+    console.log('==> Places created');
+    await createPosts(user, places);
+    console.log('==> Random post created');
   } catch (err) {
-    console.log('bin/loadFakeData error: ', err.message || err)
+    console.log('bin/loadFakeData error: ', err.message || err);
   }
-  console.log('bin/loadFakeData ended succesfully')
-})()
+  console.log('bin/loadFakeData ended succesfully');
+})();

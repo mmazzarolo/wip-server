@@ -2,8 +2,8 @@
 export const mockUser = {
   username: 'user',
   password: 'password',
-  email: 'user@test.it'
-}
+  email: 'user@test.it',
+};
 
 export const mockPlace = {
   name: 'I piaceri della carne',
@@ -15,5 +15,9 @@ export const mockPlace = {
   zipCode: '25010',
   address: 'Via Capo le Case, 27',
   email: 'DavideSabbatini@dayrep.com',
-  imageCover: { __type: 'File', name: 'img.png', url: 'http://localhost:1337/api/files/TEST_APP_ID/img.png' }
-}
+  imageCover: {
+    __type: 'File',
+    name: 'img.png',
+    url: 'http://localhost:1337/api/files/TEST_APP_ID/img.png',
+  },
+};

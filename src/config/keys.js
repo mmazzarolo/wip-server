@@ -7,5 +7,5 @@ export default {
   MASTER_KEY: process.env.MASTER_KEY || 'TEST_MASTER_KEY',
   SERVER_URL: process.env.SERVER_URL || 'http://localhost:1337/api',
   PORT: process.env.PORT || 1337,
-  PARSE_MOUNT: process.env.PARSE_MOUNT || '/api'
-}
+  PARSE_MOUNT: process.env.PARSE_MOUNT || '/api',
+};
